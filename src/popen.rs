@@ -152,6 +152,8 @@ pub struct PopenConfig {
     // because then ..Default::default() wouldn't work either.
     #[doc(hidden)]
     pub _use_default_to_construct: (),
+
+    pub creation_flags: u32,
 }
 
 impl PopenConfig {
@@ -178,6 +180,7 @@ impl PopenConfig {
             #[cfg(unix)]
             setgid: self.setgid,
             _use_default_to_construct: (),
+            creation_flags: 0,
         })
     }
 
@@ -205,6 +208,7 @@ impl Default for PopenConfig {
             #[cfg(unix)]
             setgid: None,
             _use_default_to_construct: (),
+            creation_flags: 0,
         }
     }
 }
@@ -975,7 +979,7 @@ mod os {
                 &env_block,
                 &config.cwd.as_ref().map(|os| &os[..]),
                 true,
-                0,
+                config.creation_flags,
                 raw(&child_stdin),
                 raw(&child_stdout),
                 raw(&child_stderr),
